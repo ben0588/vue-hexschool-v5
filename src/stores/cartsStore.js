@@ -69,6 +69,23 @@ export const useCartStore = defineStore('cartsStore', () => {
     }
   };
 
+  const deleteAllCarts = async () => {
+    try {
+      if (window.confirm('您確定要執行這個操作嗎？')) {
+        console.log('確認完畢'); // 之後會改其他更好看的套件
+        const api = `${ApiBaseUrl}/v2/api/${import.meta.env.VITE_API_PATH}/carts`;
+        const response = await axios.delete(api);
+        const { success } = response.data;
+        if (success) {
+          getCarts(); // 刪除成功之後重新呼叫取得
+          alert('刪除全部商品成功');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const changeCartQty = async (type, cartId, product_id, qty) => {
     try {
       cartLoading.value = true;
@@ -118,17 +135,47 @@ export const useCartStore = defineStore('cartsStore', () => {
     }
   };
 
+  const payment = async (orderId) => {
+    try {
+      toggleLoading();
+      const api = `${ApiBaseUrl}/v2/api/${import.meta.env.VITE_API_PATH}/pay/${orderId}`;
+      const response = await axios.post(api);
+      // console.log('orderCheckout', response);
+      const { success } = response.data;
+      if (success) {
+        toggleLoading();
+        alert('付款完成');
+        return response;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchOrder = async (orderId) => {
+    try {
+      const api = `${ApiBaseUrl}/v2/api/${import.meta.env.VITE_API_PATH}/order/${orderId}`;
+      const response = await axios.get(api);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return {
     carts,
     total,
     addToCarts,
     getCarts,
     deleteCart,
+    deleteAllCarts,
     changeCartQty,
     cartLoading,
     checkIsLoadingState,
     targetProductId,
     changeTargetId,
-    orderCheckout
+    orderCheckout,
+    payment,
+    fetchOrder
   };
 });

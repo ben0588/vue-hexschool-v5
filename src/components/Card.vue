@@ -19,9 +19,9 @@
         <span v-else>加入購物車</span>
       </a>
     </div>
-    {{ targetProductId }}
+    <!-- {{ targetProductId }} -->
     <br />
-    {{ product.id }}
+    <!-- {{ product.id }} -->
   </div>
 </template>
 

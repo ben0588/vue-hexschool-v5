@@ -106,6 +106,9 @@ import { onMounted } from 'vue';
 import { useCartStore } from '../stores/cartsStore';
 import { Form, Field, useForm } from 'vee-validate';
 import VeeValidateInput from '../components/VeeValidateInput.vue';
+import { useRouter, useRoute } from 'vue-router';
+const route = useRoute();
+const router = useRouter();
 
 const cartsStore = useCartStore();
 const { carts, getCarts, checkIsLoadingState, total, orderCheckout } = cartsStore;
@@ -163,7 +166,12 @@ async function onSubmit(values, actions) {
       message: values.userMessage
     };
     const response = await orderCheckout(newData); // 呼叫 API
+    const { orderId } = response.data;
     actions.resetForm(); // 重置表單
+    router.replace({
+      path: '/carts/payment',
+      query: { orderId: orderId } // 將剛建立好的訂單傳送到下一頁
+    }); // replace 不可回到上一頁
   } catch (error) {
     console.log('error', error);
   }
